@@ -23,6 +23,6 @@ This project analyses global life expectancy data by region and gender, covering
 - **Data:**
   - For the overall data, mixed gender data is used.
   - For separate gender data, we have:
-    - **Male**: [UNdata_Export_20250106_135531463.csv](data\raw\UNdata_Export_20250106_135531463.csv)
-    - **Female**: [UNdata_Export_20250106_135951253.csv](data\raw\UNdata_Export_20250106_135951253.csv)
-    - **Both** (mixed gender): [UNdata_Export_20250106_140234264.csv](data\raw\UNdata_Export_20250106_140234264.csv)
+    - **Male**: [UNdata_Export_20250106_135531463.csv](data/raw/UNdata_Export_20250106_135531463.csv)
+    - **Female**: [UNdata_Export_20250106_135951253.csv](data/raw/UNdata_Export_20250106_135951253.csv)
+    - **Both** (mixed gender): [UNdata_Export_20250106_140234264.csv](data/raw/UNdata_Export_20250106_140234264.csv)
