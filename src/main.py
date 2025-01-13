@@ -8,9 +8,9 @@ import seaborn as sns
 from scipy.stats import ttest_ind, f_oneway
 
 # Read CSV files
-both_df = pd.read_csv('data/raw/UNdata_Export_20250106_140234264.csv')
-male_df = pd.read_csv('data/raw/UNdata_Export_20250106_135531463.csv')
-female_df = pd.read_csv('data/raw/UNdata_Export_20250106_135951253.csv')
+both_df = pd.read_csv('data/raw/UNdata_Export_20250106_135531463.csv')
+male_df = pd.read_csv('data/raw/UNdata_Export_20250106_135951253.csv')
+female_df = pd.read_csv('data/raw/UNdata_Export_20250106_140234264.csv')
 
 # WHO area coordinates (latitude, longitude) for a bubble map
 who_areas_coordinates = {
@@ -79,7 +79,7 @@ area_life_expectancy = prepare_area_life_expectancy(mean_life_expectancy_by_area
 """
 plt.figure(figsize=(10, 6))
 
-for gender, color in zip(['both', 'male', 'female'], ['#D3AED6', '#A6C9F2', '#F4D0A2']):
+for gender, color in zip(['both', 'male', 'female'], ['#F4D0A2', '#A6C9F2', '#D3AED6']):
     plt.plot(
             global_life_expectancy['year'],
             global_life_expectancy[gender],
@@ -105,7 +105,7 @@ for i, year in enumerate(years):
     ax = axes[i // 3, i % 3]
     year_data = area_life_expectancy[area_life_expectancy['year'] == year]
     
-    for j, (gender, color) in enumerate(zip(['both', 'male', 'female'], ['#D3AED6', '#A6C9F2', '#F4D0A2'])):
+    for j, (gender, color) in enumerate(zip(['both', 'male', 'female'], ['#F4D0A2', '#A6C9F2', '#D3AED6'])):
         subset = year_data[year_data['gender'] == gender]
         x = np.arange(len(subset['area']))
         ax.bar(x + (j - 1) * width, subset['life_expectancy'], width, label=gender.capitalize(), color=color, alpha=0.7)

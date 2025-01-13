@@ -19,11 +19,11 @@ This project analyzes global life expectancy data from 2019 to 2024 using UN DAT
 
 ## Gender Breakdown
 - **Data:**
-  - For the overall data, mixed-gender data is used.
+  - For the overall data, mixed-gender data is used.  
   - For separate gender data, we have:
-    - **Both** (mixed-gender): [UNdata_Export_20250106_140234264.csv](data/raw/UNdata_Export_20250106_140234264.csv)
-    - **Male**: [UNdata_Export_20250106_135531463.csv](data/raw/UNdata_Export_20250106_135531463.csv)
-    - **Female**: [UNdata_Export_20250106_135951253.csv](data/raw/UNdata_Export_20250106_135951253.csv)
+    - **Both** (mixed-gender): [UNdata_Export_20250106_135531463.csv](data/raw/UNdata_Export_20250106_135531463.csv)
+    - **Male**: [UNdata_Export_20250106_135951253.csv](data/raw/UNdata_Export_20250106_135951253.csv)
+    - **Female**: [UNdata_Export_20250106_140234264.csv](data/raw/UNdata_Export_20250106_140234264.csv)
 
 - **URL:**
   - **Both** (mixed-gender): [Life expectancy at birth for both sexes combined (years)](https://data.un.org/Data.aspx?q=life+expectancy&d=PopDiv&f=variableID%3a68)
