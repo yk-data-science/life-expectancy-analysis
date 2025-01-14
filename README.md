@@ -7,15 +7,14 @@ This project analyzes global life expectancy data from 2019 to 2024 using UN DAT
 - **2020 to 2023 data**: COVID period
 - **2024 data**: Post-COVID period
 
-## Regional Breakdown
-- **Africa**
-- **Asia**
-- **Australia and New Zealand**
-- **Europe**
-- **Latin America and the Caribbean**
-- **North America**
-- **Oceania**
-- **Polar regions**
+## Regional Breakdown (WHO)
+- **AFRO (African Region):** Countries in Africa.
+- **AMRO (Americas Region):** North, Central, and South America.
+- **EMRO (Eastern Mediterranean Region):** Middle East and North Africa.
+- **EURO (European Region):** European countries.
+- **SEARO (South-East Asia Region):** South Asian countries.
+- **WPRO (Western Pacific Region):** East Asia and Pacific Islands.
+- **World:** Global data combining all regions.
 
 ## Gender Breakdown
 - **Data:**
