@@ -13,9 +13,10 @@ This project analyzes global life expectancy data from 2019 to 2024 using UN DAT
 ├── data                              # Dataset directory
 │   ├── output                        # Processed data and visualization outputs
 │   │   ├── Heatmap.png
+│   │   ├── area_average_life_expectancy.png
+│   │   ├── global_average_life_expectancy.png
+│   │   ├── heatmap.png
 │   │   ├── life_expectancy_animation.html
-│   │   ├── Life_Expectancy_by_Area.png
-│   │   └── Life_Expectancy_World.png
 │   └── raw                           # Raw data files
 │       ├── UNdata_Export_20250106_135531463.csv
 │       ├── UNdata_Export_20250106_135951253.csv
