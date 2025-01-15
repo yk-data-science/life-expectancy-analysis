@@ -2,6 +2,29 @@
 
 This project analyzes global life expectancy data from 2019 to 2024 using UN DATA, focusing on trends before, during, and after the COVID-19 pandemic. The aim is to explore how regions and gender differences influence life expectancy. Python libraries like Pandas, Seaborn, Matplotlib, and Plotly will be used for data manipulation and visualization.
 
+# Directory Structure
+<pre>
+.
+├── .gitignore                       # Specifies files and directories to be ignored by git
+├── README.md                        # Project overview and instructions
+├── requirements.txt                 # List of required Python packages
+├── Transition_of_Life_Expectancy_Before_and_After_COVID-19.pptx
+│                                     # Presentation slides (PPTX format)
+├── data                              # Dataset directory
+│   ├── output                        # Processed data and visualization outputs
+│   │   ├── Heatmap.png
+│   │   ├── life_expectancy_animation.html
+│   │   ├── Life_Expectancy_by_Area.png
+│   │   └── Life_Expectancy_World.png
+│   └── raw                           # Raw data files
+│       ├── UNdata_Export_20250106_135531463.csv
+│       ├── UNdata_Export_20250106_135951253.csv
+│       └── UNdata_Export_20250106_140234264.csv
+└── src                               # Source code directory
+    └── main.py                       # Main Python script for data analysis
+</pre>
+
+
 ## Dataset Breakdown
 - **2019 data**: Pre-COVID period
 - **2020 to 2023 data**: COVID period
