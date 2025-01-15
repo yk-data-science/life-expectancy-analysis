@@ -98,7 +98,7 @@ $$
 
 ### 3. **Visualization**
 - **Heatmap**: A heatmap is generated to visualize life expectancy across different regions and years.
-- **Boxplots**: Boxplots is used to visualize the spread of life expectancy data by region and gender.
+<!-- - **Boxplots**: Boxplots is used to visualize the spread of life expectancy data by region and gender. -->
 
 ## Setup Instructions
 
