@@ -12,6 +12,9 @@ both_df = pd.read_csv('data/raw/UNdata_Export_20250106_135531463.csv')
 male_df = pd.read_csv('data/raw/UNdata_Export_20250106_135951253.csv')
 female_df = pd.read_csv('data/raw/UNdata_Export_20250106_140234264.csv')
 
+# Output file path
+file_path = 'data/output'
+
 # WHO area coordinates (latitude, longitude) for a bubble map
 who_areas_coordinates = {
     'WHO: African region (AFRO)': {'lat': 1.0, 'lon': 20.0},
@@ -28,6 +31,9 @@ area_abbreviations = {area: area.split('(')[-1].strip(')') for area in who_areas
 
 # List of Area
 areas = list(area_abbreviations.values())
+
+# Color list
+colours =  ['#F4D0A2', '#A6C9F2', '#D3AED6']
 
 def extract_life_expectancy(df, area):
     # Extract life expectancy for each year from 2019 to 2024 (Pre-COVID, COVID, Post-COVID).
@@ -74,16 +80,18 @@ def prepare_area_life_expectancy(mean_life_expectancy_by_area):
 global_life_expectancy = prepare_global_life_expectancy(mean_life_expectancy_by_area)
 area_life_expectancy = prepare_area_life_expectancy(mean_life_expectancy_by_area)
 
+
 """
 1. Global life expectancy line plot with genders
 """
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(10, 6)) # plot size
 
-for gender, color in zip(['both', 'male', 'female'], ['#F4D0A2', '#A6C9F2', '#D3AED6']):
+for gender, color in zip(['both', 'male', 'female'], colours): # Three coloured lines
     plt.plot(
             global_life_expectancy['year'],
             global_life_expectancy[gender],
-            marker='o', color=color,
+            marker='o',
+            color=color,
             label=gender.capitalize()
         )
     
@@ -93,6 +101,10 @@ plt.ylabel('Life Expectancy (years)', fontsize=12)
 plt.grid(True)
 plt.legend()
 
+# Save the plot to the specified path, overwriting the file if it exists
+plt.savefig(f'{file_path}/global_average_life_expectancy.png')
+
+
 """
 2. Area life expectancy bar plots with genders
 """
@@ -101,27 +113,39 @@ fig, axes = plt.subplots(2, 3, figsize=(16, 10), sharey=True) # Plot bar charts 
 width = 0.25  # Bar width for each gender
 years = range(2019, 2025) # 2024 + 1
 
-for i, year in enumerate(years):
+for i, year in enumerate(years): # number and list
     ax = axes[i // 3, i % 3]
     year_data = area_life_expectancy[area_life_expectancy['year'] == year]
     
-    for j, (gender, color) in enumerate(zip(['both', 'male', 'female'], ['#F4D0A2', '#A6C9F2', '#D3AED6'])):
+    for j, (gender, color) in enumerate(zip(['both', 'male', 'female'], colours)):
         subset = year_data[year_data['gender'] == gender]
         x = np.arange(len(subset['area']))
-        ax.bar(x + (j - 1) * width, subset['life_expectancy'], width, label=gender.capitalize(), color=color, alpha=0.7)
+        ax.bar(
+                x + (j - 1) * width, subset['life_expectancy'],
+                width,
+                label=gender.capitalize(),
+                color=color,
+                alpha=0.7 # transparency
+               )
     
     ax.set_title(f'Life Expectancy by Area ({year})', fontsize=13)
     ax.set_xlabel('Area', fontsize=12)
     ax.set_ylabel('Life Expectancy (years)', fontsize=12)
 
-    ax.set_xticks(np.arange(len(areas)))
+    ax.set_xticks(np.arange(len(areas))) # x-axis: areas
     ax.set_xticklabels([area for area in areas], rotation=45, ha='right')
 
     ax.grid(axis='y', linestyle='--', alpha=0.7)
 
 fig.tight_layout()
 
-# 3. Map plot using both data
+# Save the plot to the specified path, overwriting the file if it exists
+plt.savefig(f'{file_path}/area_average_life_expectancy.png')
+
+
+"""
+3. Map plot using both data - both gender
+"""
 both_data = area_life_expectancy[(area_life_expectancy['gender'] == 'both') & (area_life_expectancy['area'] != 'World')]
 
 both_data['lat'] = both_data['area'].map(lambda x: who_areas_coordinates[x]['lat'])
@@ -147,25 +171,31 @@ fig = px.scatter_mapbox(
 fig.update_layout(mapbox_style="open-street-map")
 
 # Save the animated figure as an HTML file
-fig.write_html("data/output/life_expectancy_animation.html")
+fig.write_html(f'{file_path}/life_expectancy_animation.html')
 
 
 """
-4. Statistics - Life Expectancy before, during, and after COVID
+4. Statistics - Life Expectancy before, during, and after COVID-19
 """
 
 def filter_data_by_period(area_life_expectancy, start_year, end_year):
     # Filter data for pre-COVID, COVID period, and post-COVID period
+    # input: area_life_expectancy, start_year, end_year
+    # output: area_life_expectancy list
+
     return area_life_expectancy[(area_life_expectancy['year'] >= start_year) &
                                 (area_life_expectancy['year'] <= end_year)]
 
 # Filter data for each period
 pre_covid_data = filter_data_by_period(area_life_expectancy, 2019, 2019)
 post_covid_data = filter_data_by_period(area_life_expectancy, 2024, 2024)
-covid_period_data = filter_data_by_period(area_life_expectancy, 2020, 2023)
+# covid_period_data = filter_data_by_period(area_life_expectancy, 2020, 2023)
 
 def perform_ttest_for_period(data, gender1, gender2):
     # Perform t-tests for pre-COVID and post-COVID periods
+    # input:  data, gender1, gender2
+    # output: t_stat, p_val
+
     gender1_data = data[data['gender'] == gender1]['life_expectancy']
     gender2_data = data[data['gender'] == gender2]['life_expectancy']
     
@@ -183,6 +213,7 @@ t_stat_pre, p_val_pre = perform_ttest_for_period(pre_covid_data, 'male', 'female
 
 print(f"T-Statistic (Pre-COVID): {t_stat_pre:.2f}, P-Value: {p_val_pre:.4f}")
 
+# p-value checker - threshold is 0.05
 if p_val_pre < 0.05:
     print("The result is statistically significant: there is a difference in life expectancy between genders (Pre-COVID).")
 else:
@@ -231,4 +262,12 @@ plt.title(f'Life Expectancy by Area and Year\n'
           f'ANOVA by Year: p = {anova_result_year.pvalue:.3f})', fontsize=14)
 plt.xlabel('Year', fontsize=12)
 plt.ylabel('Area', fontsize=12)
+
+# Save the plot to the specified path, overwriting the file if it exists
+plt.savefig(f'{file_path}/heatmap.png')
+
 plt.show()
+
+
+# TODO1: To reduce hardcoding
+# TODO2: To devide into files by process
