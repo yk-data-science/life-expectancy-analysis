@@ -8,7 +8,7 @@ This project analyzes global life expectancy data from 2019 to 2024 using UN DAT
 ├── .gitignore                       # Specifies files and directories to be ignored by git
 ├── README.md                        # Project overview and instructions
 ├── requirements.txt                 # List of required Python packages
-├── Transition_of_Life_Expectancy_Before_and_After_COVID-19.pptx
+├── Assessment02_Transition_of_Life_Expectancy_Before_and_After_COVID-19.pptx
 │                                     # Presentation slides (PPTX format)
 ├── data                              # Dataset directory
 │   ├── output                        # Processed data and visualization outputs
