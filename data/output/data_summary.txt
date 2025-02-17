@@ -1,0 +1,190 @@
+===================
+Data Summary
+===================
+
+
+--- life_expectancy_both_df info ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 48 entries, 0 to 47
+Data columns (total 4 columns):
+ #   Column           Non-Null Count  Dtype  
+---  ------           --------------  -----  
+ 0   Country or Area  48 non-null     object 
+ 1   Year(s)          48 non-null     int64  
+ 2   Variant          48 non-null     object 
+ 3   Value            48 non-null     float64
+dtypes: float64(1), int64(1), object(2)
+memory usage: 1.6+ KB
+
+--- life_expectancy_both_df Summary ---
+           Year(s)      Value
+count    48.000000  48.000000
+mean   2021.500000  72.386704
+std       1.725898   5.119989
+min    2019.000000  60.721100
+25%    2020.000000  70.588750
+50%    2021.500000  72.613450
+75%    2023.000000  77.102925
+max    2024.000000  78.669700
+--- life_expectancy_both_df Missing Values ---
+Country or Area    0
+Year(s)            0
+Variant            0
+Value              0
+dtype: int64
+
+
+--- life_expectancy_male_df info ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 48 entries, 0 to 47
+Data columns (total 4 columns):
+ #   Column           Non-Null Count  Dtype  
+---  ------           --------------  -----  
+ 0   Country or Area  48 non-null     object 
+ 1   Year(s)          48 non-null     int64  
+ 2   Variant          48 non-null     object 
+ 3   Value            48 non-null     float64
+dtypes: float64(1), int64(1), object(2)
+memory usage: 1.6+ KB
+
+--- life_expectancy_male_df Summary ---
+           Year(s)      Value
+count    48.000000  48.000000
+mean   2021.500000  69.853996
+std       1.725898   4.717316
+min    2019.000000  58.831900
+25%    2020.000000  68.321975
+50%    2021.500000  70.249300
+75%    2023.000000  74.099025
+max    2024.000000  75.308400
+--- life_expectancy_male_df Missing Values ---
+Country or Area    0
+Year(s)            0
+Variant            0
+Value              0
+dtype: int64
+
+
+--- life_expectancy_female_df info ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 48 entries, 0 to 47
+Data columns (total 4 columns):
+ #   Column           Non-Null Count  Dtype  
+---  ------           --------------  -----  
+ 0   Country or Area  48 non-null     object 
+ 1   Year(s)          48 non-null     int64  
+ 2   Variant          48 non-null     object 
+ 3   Value            48 non-null     float64
+dtypes: float64(1), int64(1), object(2)
+memory usage: 1.6+ KB
+
+--- life_expectancy_female_df Summary ---
+           Year(s)      Value
+count    48.000000  48.000000
+mean   2021.500000  75.018144
+std       1.725898   5.544214
+min    2019.000000  62.639000
+25%    2020.000000  72.741425
+50%    2021.500000  75.305600
+75%    2023.000000  80.143450
+max    2024.000000  81.991500
+--- life_expectancy_female_df Missing Values ---
+Country or Area    0
+Year(s)            0
+Variant            0
+Value              0
+dtype: int64
+
+
+--- population_both_df info ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 48 entries, 0 to 47
+Data columns (total 4 columns):
+ #   Column           Non-Null Count  Dtype  
+---  ------           --------------  -----  
+ 0   Country or Area  48 non-null     object 
+ 1   Year(s)          48 non-null     int64  
+ 2   Variant          48 non-null     object 
+ 3   Value            48 non-null     float64
+dtypes: float64(1), int64(1), object(2)
+memory usage: 1.6+ KB
+
+--- population_both_df Summary ---
+           Year(s)         Value
+count    48.000000  4.800000e+01
+mean   2021.500000  2.988613e+06
+std       1.725898  2.941757e+06
+min    2019.000000  7.522157e+05
+25%    2020.000000  9.984151e+05
+50%    2021.500000  1.598283e+06
+75%    2023.000000  3.532999e+06
+max    2024.000000  8.161973e+06
+--- population_both_df Missing Values ---
+Country or Area    0
+Year(s)            0
+Variant            0
+Value              0
+dtype: int64
+
+
+--- population_male_df info ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 48 entries, 0 to 47
+Data columns (total 4 columns):
+ #   Column           Non-Null Count  Dtype  
+---  ------           --------------  -----  
+ 0   Country or Area  48 non-null     object 
+ 1   Year(s)          48 non-null     int64  
+ 2   Variant          48 non-null     object 
+ 3   Value            48 non-null     float64
+dtypes: float64(1), int64(1), object(2)
+memory usage: 1.6+ KB
+
+--- population_male_df Summary ---
+           Year(s)         Value
+count    48.000000  4.800000e+01
+mean   2021.500000  1.503542e+06
+std       1.725898  1.480781e+06
+min    2019.000000  3.872640e+05
+25%    2020.000000  4.931894e+05
+50%    2021.500000  8.053183e+05
+75%    2023.000000  1.788069e+06
+max    2024.000000  4.103612e+06
+--- population_male_df Missing Values ---
+Country or Area    0
+Year(s)            0
+Variant            0
+Value              0
+dtype: int64
+
+
+--- population_female_df info ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 48 entries, 0 to 47
+Data columns (total 4 columns):
+ #   Column           Non-Null Count  Dtype  
+---  ------           --------------  -----  
+ 0   Country or Area  48 non-null     object 
+ 1   Year(s)          48 non-null     int64  
+ 2   Variant          48 non-null     object 
+ 3   Value            48 non-null     float64
+dtypes: float64(1), int64(1), object(2)
+memory usage: 1.6+ KB
+
+--- population_female_df Summary ---
+           Year(s)         Value
+count    48.000000  4.800000e+01
+mean   2021.500000  1.485071e+06
+std       1.725898  1.461033e+06
+min    2019.000000  3.649517e+05
+25%    2020.000000  5.052256e+05
+50%    2021.500000  7.929650e+05
+75%    2023.000000  1.744930e+06
+max    2024.000000  4.058360e+06
+--- population_female_df Missing Values ---
+Country or Area    0
+Year(s)            0
+Variant            0
+Value              0
+dtype: int64
+

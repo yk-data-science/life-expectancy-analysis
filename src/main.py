@@ -1,19 +1,56 @@
 import pandas as pd
 import numpy as np
-
 import matplotlib.pyplot as plt
 import plotly.express as px
-
 import seaborn as sns
 from scipy.stats import ttest_ind, f_oneway
 
 # Read CSV files
-both_df = pd.read_csv('data/raw/UNdata_Export_20250106_135531463.csv')
-male_df = pd.read_csv('data/raw/UNdata_Export_20250106_135951253.csv')
-female_df = pd.read_csv('data/raw/UNdata_Export_20250106_140234264.csv')
+life_expectancy_both_df = pd.read_csv('data/raw/UNdata_Export_20250106_135531463.csv')
+life_expectancy_male_df = pd.read_csv('data/raw/UNdata_Export_20250106_135951253.csv')
+life_expectancy_female_df = pd.read_csv('data/raw/UNdata_Export_20250106_140234264.csv')
+
+population_both_df = pd.read_csv('data/raw/UNdata_Export_20250217_214426488.csv')
+population_male_df = pd.read_csv('data/raw/UNdata_Export_20250217_214612681.csv')
+population_female_df = pd.read_csv('data/raw/UNdata_Export_20250217_214748417.csv')
 
 # Output file path
 file_path = 'data/output'
+summary_output_path = f'{file_path}/data_summary.txt'
+
+def df_summary_to_file(df, name):
+    """
+        To write summary statistics of a DataFrame to a file
+    """
+    # Open the file in append mode to add new information without overwriting.
+    with open(summary_output_path, 'a') as f:  
+        # Write the name of the DataFrame being summarized
+        f.write(f'\n--- {name} info ---\n')
+        
+        df.info(buf=f) # Write the DataFrame's info (data types, non-null counts, etc.)
+        f.write(f'\n--- {name} Summary ---\n')
+        
+        f.write(str(df.describe())) # Write the summary statistics (mean, std, min, etc.)
+        f.write(f'\n--- {name} Missing Values ---\n')
+        
+        f.write(str(df.isnull().sum())) # Write the count of missing values for each column
+        f.write('\n\n') # Line break
+
+# Initialize the summary file with a header
+with open(summary_output_path, 'w') as f:
+    f.write('===================\n')
+    f.write('Data Summary\n')
+    f.write('===================\n\n')
+
+# Write summaries for each DataFrame, for both life expectancy and population data
+df_summary_to_file(life_expectancy_both_df, 'life_expectancy_both_df')
+df_summary_to_file(life_expectancy_male_df, 'life_expectancy_male_df')
+df_summary_to_file(life_expectancy_female_df, 'life_expectancy_female_df')
+
+df_summary_to_file(population_both_df, 'population_both_df')
+df_summary_to_file(population_male_df, 'population_male_df')
+df_summary_to_file(population_female_df, 'population_female_df')
+
 
 # WHO area coordinates (latitude, longitude) for a bubble map
 who_areas_coordinates = {
@@ -29,11 +66,9 @@ who_areas_coordinates = {
 # Generate abbreviations from who_areas_coordinates
 area_abbreviations = {area: area.split('(')[-1].strip(')') for area in who_areas_coordinates.keys()}
 
-# List of Area
-areas = list(area_abbreviations.values())
+areas = list(area_abbreviations.values()) # List of Area
+colours =  ['#F4D0A2', '#A6C9F2', '#D3AED6'] # Color list
 
-# Color list
-colours =  ['#F4D0A2', '#A6C9F2', '#D3AED6']
 
 def extract_life_expectancy(df, area):
     # Extract life expectancy for each year from 2019 to 2024 (Pre-COVID, COVID, Post-COVID).
@@ -44,45 +79,99 @@ def calculate_mean_life_expectancy():
     # Calculate mean life expectancy by area and gender - dictionary
     return {
         area: {
-            'both': extract_life_expectancy(both_df, area),
-            'male': extract_life_expectancy(male_df, area),
-            'female': extract_life_expectancy(female_df, area),
+            'both': extract_life_expectancy(life_expectancy_both_df, area),
+            'male': extract_life_expectancy(life_expectancy_male_df, area),
+            'female': extract_life_expectancy(life_expectancy_female_df, area),
+        }
+        for area in who_areas_coordinates
+    }
+
+def calculate_population():
+    # Calculate population by area and gender - dictionary
+    return {
+        area: {
+            'both': extract_life_expectancy(population_both_df, area),
+            'male': extract_life_expectancy(population_male_df, area),
+            'female': extract_life_expectancy(population_female_df, area),
         }
         for area in who_areas_coordinates
     }
 
 mean_life_expectancy_by_area = calculate_mean_life_expectancy()
+population_by_area = calculate_population()
 
-def prepare_global_life_expectancy(mean_life_expectancy_by_area):
-    # Prepare data for global average life expectancy plot.
+def calculate_weighted_life_expectancy(life_expectancy_values, population_values):
+    """
+        Calculate weighted life expectancy using population as weights.
+        life_expectancy_values: List of life expectancy values for an area or year.
+        population_values: List of corresponding population values for each area or year.
+    """
+    weighted_sum = np.nansum(np.array(life_expectancy_values) * np.array(population_values)) # weight by population
+    total_population = np.nansum(population_values)
+    if total_population == 0:
+        return np.nan  # Avoid division by zero
+    return weighted_sum / total_population
+
+
+def prepare_life_expectancy_data(mean_life_expectancy_by_area, population_by_area):
+    """
+        Prepare data for global average life expectancy and area life expectancy,
+        Apply weighted average calculations using population data.
+    """
     global_data_dict = {'year': range(2019, 2025), 'both': [], 'male': [], 'female': []}
-    
-    for year in global_data_dict['year']:
-        global_data_dict['both'].append(np.mean([v['both'].get(year, np.nan) for v in mean_life_expectancy_by_area.values()]))
-        global_data_dict['male'].append(np.mean([v['male'].get(year, np.nan) for v in mean_life_expectancy_by_area.values()]))
-        global_data_dict['female'].append(np.mean([v['female'].get(year, np.nan) for v in mean_life_expectancy_by_area.values()]))
-    
-    return pd.DataFrame(global_data_dict)
+    area_data = []
 
-def prepare_area_life_expectancy(mean_life_expectancy_by_area):
-    # Prepare data for life expectancy by area for each year.
-    data = []
-    
+    # Process global life expectancy with weighted average
+    for year in global_data_dict['year']:
+        for gender in ['both', 'male', 'female']:
+            life_expectancy_values = []
+            population_values = []
+            
+            # Collect life expectancy and population for each area
+            for area, values in mean_life_expectancy_by_area.items():
+                if year in values[gender]:
+                    life_expectancy_values.append(values[gender][year])
+
+            for area, values in population_by_area.items():
+                if year in values[gender]:
+                    population_values.append(values[gender][year])
+
+            # Calculate weighted average for global data
+            weighted_avg = calculate_weighted_life_expectancy(life_expectancy_values, population_values)
+            global_data_dict[gender].append(weighted_avg)
+            
+            # Calculate unweighted (simple mean) average
+            unweighted_avg = np.nanmean(life_expectancy_values)
+            print(f"Year {year}, Gender {gender}: Unweighted = {unweighted_avg:.2f}, Weighted = {weighted_avg:.2f}, Difference = {weighted_avg - unweighted_avg:.2f}")
+            
+    # Prepare area-level life expectancy data (with gender and year)
     for area, values in mean_life_expectancy_by_area.items():
         for year in range(2019, 2025):
             for gender in ['both', 'male', 'female']:
                 if year in values[gender]:
-                    data.append({'area': area, 'year': year, 'gender': gender, 'life_expectancy': values[gender][year]})
+                    # Append data to area_data
+                    area_data.append({
+                        'area': area,
+                        'year': year,
+                        'gender': gender,
+                        'life_expectancy': values[gender][year],
+                    })
     
-    return pd.DataFrame(data)
+    # Convert area-level data to DataFrame
+    area_life_expectancy_df = pd.DataFrame(area_data)
 
-# Prepare data
-global_life_expectancy = prepare_global_life_expectancy(mean_life_expectancy_by_area)
-area_life_expectancy = prepare_area_life_expectancy(mean_life_expectancy_by_area)
+    return global_data_dict, area_life_expectancy_df
+
+
+global_life_expectancy, area_life_expectancy = prepare_life_expectancy_data(mean_life_expectancy_by_area, population_by_area)
 
 
 """
 1. Global life expectancy line plot with genders
+    Purpose: This line plot shows the global life expectancy from 2019 to 2024, separated by gender.
+    X-axis: Year (2019 to 2024)
+    Y-axis: Life Expectancy (years)
+    Data used: `global_life_expectancy` dataset, showing life expectancy for both genders (both, male, female)
 """
 plt.figure(figsize=(10, 6)) # plot size
 
@@ -107,6 +196,10 @@ plt.savefig(f'{file_path}/global_average_life_expectancy.png')
 
 """
 2. Area life expectancy bar plots with genders
+    Purpose: These bar plots show life expectancy for different areas from 2019 to 2024, separated by gender.
+    X-axis: Area (e.g., WHO regions)
+    Y-axis: Life Expectancy (years)
+    Data used: `area_life_expectancy` dataset, with life expectancy data for each region and year
 """
 fig, axes = plt.subplots(2, 3, figsize=(16, 10), sharey=True) # Plot bar charts 2 x 3
 
@@ -144,11 +237,20 @@ plt.savefig(f'{file_path}/area_average_life_expectancy.png')
 
 
 """
-3. Map plot using both data - both gender
+3. Map plot using both data - both genders
+    Purpose: This animated map shows how life expectancy changed by region from 2019 to 2024.
+    X-axis: Longitude
+    Y-axis: Latitude
+    Data used: `area_life_expectancy` and `who_areas_coordinates` (geographical info), with data for both genders (label: "both")
 """
+
+# Exclude 'World' data to focus on life expectancy data for individual regions only as this is not needed for the regional bubble map.
 both_data = area_life_expectancy[(area_life_expectancy['gender'] == 'both') & (area_life_expectancy['area'] != 'World')]
 
+# Latitude values from the 'who_areas_coordinates' based on the 'area' key
 both_data['lat'] = both_data['area'].map(lambda x: who_areas_coordinates[x]['lat'])
+
+# Longitude values from the 'who_areas_coordinates' based on the 'area' key
 both_data['lon'] = both_data['area'].map(lambda x: who_areas_coordinates[x]['lon'])
 
 # Scaling for bubble size
@@ -157,18 +259,18 @@ both_data['scaled_size'] = (area_life_expectancy['life_expectancy'] - area_life_
 
 fig = px.scatter_mapbox(
     both_data,
-    lat="lat",
-    lon="lon",
-    color="life_expectancy",
-    hover_name="area",
-    animation_frame="year",
-    size="scaled_size",
+    lat='lat',
+    lon='lon',
+    color='life_expectancy',
+    hover_name='area',
+    animation_frame='year',
+    size='scaled_size',
     size_max=40,
     zoom=1, 
-    color_continuous_scale="YlOrBr",
-    title="Life Expectancy by WHO Region (2019-2024)"
+    color_continuous_scale='YlOrBr',
+    title='Life Expectancy by WHO Region (2019-2024)'
 )
-fig.update_layout(mapbox_style="open-street-map")
+fig.update_layout(mapbox_style='open-street-map')
 
 # Save the animated figure as an HTML file
 fig.write_html(f'{file_path}/life_expectancy_animation.html')
@@ -179,22 +281,24 @@ fig.write_html(f'{file_path}/life_expectancy_animation.html')
 """
 
 def filter_data_by_period(area_life_expectancy, start_year, end_year):
-    # Filter data for pre-COVID, COVID period, and post-COVID period
-    # input: area_life_expectancy, start_year, end_year
-    # output: area_life_expectancy list
-
+    """
+        Filter data for pre-COVID, COVID period, and post-COVID period
+        input: area_life_expectancy, start_year, end_year
+        output: area_life_expectancy list
+    """
     return area_life_expectancy[(area_life_expectancy['year'] >= start_year) &
                                 (area_life_expectancy['year'] <= end_year)]
 
 # Filter data for each period
 pre_covid_data = filter_data_by_period(area_life_expectancy, 2019, 2019)
 post_covid_data = filter_data_by_period(area_life_expectancy, 2024, 2024)
-# covid_period_data = filter_data_by_period(area_life_expectancy, 2020, 2023)
 
 def perform_ttest_for_period(data, gender1, gender2):
-    # Perform t-tests for pre-COVID and post-COVID periods
-    # input:  data, gender1, gender2
-    # output: t_stat, p_val
+    """
+        Perform t-tests for pre-COVID and post-COVID periods
+        input:  data, gender1, gender2
+        output: t_stat, p_val
+    """
 
     gender1_data = data[data['gender'] == gender1]['life_expectancy']
     gender2_data = data[data['gender'] == gender2]['life_expectancy']
@@ -265,7 +369,6 @@ plt.ylabel('Area', fontsize=12)
 
 # Save the plot to the specified path, overwriting the file if it exists
 plt.savefig(f'{file_path}/heatmap.png')
-
 plt.show()
 
 
